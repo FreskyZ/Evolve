@@ -673,8 +673,8 @@ var gene_sequence = global.arpa['sequence'] && global.arpa['sequence']['on'] ? g
 function fastLoop(){
     if (!global.race['no_craft']){
         $('.craft').each(function(e){
-            if (typeof $(this).data('val') === 'number'){
-                $(this).html(sizeApproximation($(this).data('val') * keyMultiplier(),1));
+            if (typeof $(this).data('val') === 'number') {
+                $(this).html($(this).data('val') * keyMultiplier());
             }
         });
     }
