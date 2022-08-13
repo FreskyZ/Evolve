@@ -2147,6 +2147,11 @@ export function sizeApproximation(value,precision,fixed){
     }
 }
 
+// display numbers precisely comma separated, to reduce confusion caused by approximation
+export function sizePrecise(value) {
+    return Intl.NumberFormat('en-US').format(Math.round(value));
+}
+
 $(window).resize(function(){
     resizeGame();
 });
