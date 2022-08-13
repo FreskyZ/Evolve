@@ -4,16 +4,12 @@
   "description": "Evolve Idle",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "less": "lessc -x src/evolve.less evolve/evolve.css",
-    "dev": "npx webpack --config webpack.evolve.dev.js",
-    "evolve": "npx webpack --config webpack.evolve.prod.js",
-    "build": "npm run evolve && npm run wiki",
-    "build-dev": "npm run dev && npm run wiki-dev",
-    "wiki-dev": "npx webpack --config webpack.wiki.dev.js",
-    "wiki": "npx webpack --config webpack.wiki.prod.js",
-    "wiki-less": "lessc -x src/wiki/wiki.less wiki/wiki.css",
-    "serve": "servehere -c"
+    "less": "lessc -x src/evolve.less build/styles/index.css",
+    "dev": "npx webpack serve --env dev",
+    "pro": "npx webpack",
+    "wikiless": "lessc -x src/wiki/wiki.less build/styles/wiki.css",
+    "wikidev": "npx webpack serve --env dev --env wiki",
+    "wikipro": "npx webpack --env wiki"
   },
   "repository": {
     "type": "git",
@@ -31,9 +27,9 @@
   "devDependencies": {
     "ini": "^1.3.8",
     "less": "^3.13.0",
-    "servehere": "^1.7.0",
-    "webpack": "^5.10.1",
-    "webpack-cli": "^4.2.0"
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.10.0"
   },
   "dependencies": {
     "node": "^16.1.0"
