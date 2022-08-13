@@ -2095,51 +2095,56 @@ export function sizeApproximation(value,precision,fixed){
     let result = 0;
     let affix = '';
     let neg = value < 0 ? true : false;
-    if (neg){
-        value *= -1;
+
+    if (global.settings.affix == 'sci') {
+        return Number(value).toExponential(2).replace('e+', 'e').replace('e0', '');
+    } else {
+        if (neg){
+            value *= -1;
+        }
+        if (value <= 9999){
+            result = +value.toFixed(precision);
+        }
+        else if (value < 1000000){
+            affix = affix_list[global.settings.affix][0];
+            result = fixed ? +(value / 1000).toFixed(1) : (Math.floor(value / 100) / 10);
+        }
+        else if (value < 1000000000){
+            affix = affix_list[global.settings.affix][1];
+            result = fixed ? +(value / 1000000).toFixed(1) : (Math.floor(value / 10000) / 100);
+        }
+        else if (value < 1000000000000){
+            affix = affix_list[global.settings.affix][2];
+            result = fixed ? +(value / 1000000000).toFixed(1) : (Math.floor(value / 10000000) / 100);
+        }
+        else if (value < 1000000000000000){
+            affix = affix_list[global.settings.affix][3];
+            result = fixed ? +(value / 1000000000000).toFixed(1) : (Math.floor(value / 10000000000) / 100);
+        }
+        else if (value < 1000000000000000000){
+            affix = affix_list[global.settings.affix][4];
+            result = fixed ? +(value / 1000000000000000).toFixed(1) : (Math.floor(value / 10000000000000) / 100);
+        }
+        else if (value < 1000000000000000000000){
+            affix = affix_list[global.settings.affix][5];
+            result = fixed ? +(value / 1000000000000000000).toFixed(1) : (Math.floor(value / 10000000000000000) / 100);
+        }
+        else if (value < 1000000000000000000000000){
+            affix = affix_list[global.settings.affix][6];
+            result = fixed ? +(value / 1000000000000000000000).toFixed(1) : (Math.floor(value / 10000000000000000000) / 100);
+        }
+        else {
+            affix = affix_list[global.settings.affix][7];
+            result = fixed ? +(value / 1000000000000000000000000).toFixed(1) : (Math.floor(value / 10000000000000000000000) / 100);
+        }
+        if (result >= 100){
+            result = +result.toFixed(1);
+        }
+        if (neg){
+            result *= -1;
+        }
+        return result + affix;
     }
-    if (value <= 9999){
-        result = +value.toFixed(precision);
-    }
-    else if (value < 1000000){
-        affix = affix_list[global.settings.affix][0];
-        result = fixed ? +(value / 1000).toFixed(1) : (Math.floor(value / 100) / 10);
-    }
-    else if (value < 1000000000){
-        affix = affix_list[global.settings.affix][1];
-        result = fixed ? +(value / 1000000).toFixed(1) : (Math.floor(value / 10000) / 100);
-    }
-    else if (value < 1000000000000){
-        affix = affix_list[global.settings.affix][2];
-        result = fixed ? +(value / 1000000000).toFixed(1) : (Math.floor(value / 10000000) / 100);
-    }
-    else if (value < 1000000000000000){
-        affix = affix_list[global.settings.affix][3];
-        result = fixed ? +(value / 1000000000000).toFixed(1) : (Math.floor(value / 10000000000) / 100);
-    }
-    else if (value < 1000000000000000000){
-        affix = affix_list[global.settings.affix][4];
-        result = fixed ? +(value / 1000000000000000).toFixed(1) : (Math.floor(value / 10000000000000) / 100);
-    }
-    else if (value < 1000000000000000000000){
-        affix = affix_list[global.settings.affix][5];
-        result = fixed ? +(value / 1000000000000000000).toFixed(1) : (Math.floor(value / 10000000000000000) / 100);
-    }
-    else if (value < 1000000000000000000000000){
-        affix = affix_list[global.settings.affix][6];
-        result = fixed ? +(value / 1000000000000000000000).toFixed(1) : (Math.floor(value / 10000000000000000000) / 100);
-    }
-    else {
-        affix = affix_list[global.settings.affix][7];
-        result = fixed ? +(value / 1000000000000000000000000).toFixed(1) : (Math.floor(value / 10000000000000000000000) / 100);
-    }
-    if (result >= 100){
-        result = +result.toFixed(1);
-    }
-    if (neg){
-        result *= -1;
-    }
-    return result + affix;
 }
 
 $(window).resize(function(){
