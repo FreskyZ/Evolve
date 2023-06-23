@@ -309,8 +309,11 @@ export function messageQueue(msg,color,dnr,tags,reload){
 
     color = color || 'warning';
 
+    if (!reload) {
+        msg = '[' + loc('city_calendar_year', [global.city.calendar.year]) + loc('city_calendar_day', [global.city.calendar.day]) + '] ' +msg;
+    }
     if (tags.includes(message_logs.view)){
-        let new_message = $('<p class="has-text-'+color+'">'+msg+'</p>');
+        let new_message = $('<p class="has-text-'+color+'">' + msg +'</p>');
         $('#msgQueueLog').prepend(new_message);
         if ($('#msgQueueLog').children().length > global.settings.msgFilters[message_logs.view].max){
             $('#msgQueueLog').children().last().remove();

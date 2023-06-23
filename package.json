@@ -4,10 +4,10 @@
   "description": "Evolve Idle",
   "private": true,
   "scripts": {
-    "less": "lessc -x src/evolve.less build/styles/index.css",
+    "less": "lessc -x src/evolve.less dist/styles/index.css",
     "dev": "npx webpack serve --env dev",
     "pro": "npx webpack",
-    "wikiless": "lessc -x src/wiki/wiki.less build/styles/wiki.css",
+    "wikiless": "lessc -x src/wiki/wiki.less dist/styles/wiki.css",
     "wikidev": "npx webpack serve --env dev --env wiki",
     "wikipro": "npx webpack --env wiki"
   },

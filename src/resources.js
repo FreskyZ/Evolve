@@ -1,4 +1,4 @@
-import { global, tmp_vars, keyMultiplier, breakdown, sizeApproximation, p_on, support_on } from './vars.js';
+import { global, tmp_vars, keyMultiplier, breakdown, sizeApproximation, p_on, support_on, sizePrecise } from './vars.js';
 import { vBind, clearElement, modRes, flib, calc_mastery, calcPillar, eventActive, easterEgg, trickOrTreat, popover, harmonyEffect, darkEffect } from './functions.js';
 import { traits } from './races.js';
 import { hellSupression } from './portal.js';
@@ -695,6 +695,12 @@ function loadResource(name,wiki,max,rate,tradable,stackable,color){
         craft.append($(`<span id="inc${name}A"><a @click="craft('${name}','A')" aria-label="craft max ${name}">+<span class="craft" data-val="${'A'}">A</span></a></span>`));
         infopops = true;
     }
+    else if (name == "Crates") {
+        res_container.append($(`<b-tooltip :label="buildCrateDesc()" position="is-bottom" class="crate" animated multilined><span @click="buildCrate()" class="interact">${loc('resource_modal_construct')}</span></b-tooltup>`));
+    }
+    else if (name == "Containers") {
+        res_container.append($(`<b-tooltip :label="buildContainerDesc()" position="is-bottom" class="container" animated multilined><span @click="buildContainer()" class="interact">${loc('resource_modal_construct')}</span></b-tooltip>`));
+    }
     else {
         res_container.append($(`<span></span>`));
     }
@@ -739,6 +745,18 @@ function loadResource(name,wiki,max,rate,tradable,stackable,color){
             },
             showTrigger(){
                 return global.resource.Crates.display;
+            },
+            buildCrate() {
+                buildCrate();
+            },
+            buildContainer() {
+                buildContainer();
+            },
+            buildCrateDesc(){
+                return buildCrateLabel();
+            },
+            buildContainerDesc(){
+                return buildContainerLabel();
             },
             craft(res,vol){
                 if (!global.race['no_craft']){
@@ -875,7 +893,7 @@ export function setResourceName(name){
         global.resource[name].name = flib('name');
     }
     else {
-        global.resource[name].name = name === 'Money' ? '$' : loc(`resource_${name}_name`);
+        global.resource[name].name = loc(`resource_${name}_name`);
     }
     
     if (eventActive('fool',2022)){
@@ -1943,6 +1961,11 @@ function breakdownPopover(id,name,type){
         if (type === 'p'){
             let dir = global['resource'][name].diff > 0 ? 'success' : 'danger';
             bd.append(`<div class="modal_bd sum"><span>{{ res.diff | direction }}</span><span class="has-text-${dir}">{{ res.amount | counter }}</span></div>`);
+        } else if (id != 'cntContainers' && id != 'cntCrates') {
+            bd.append(`<div class="modal_bd amount"><span>${loc('morale_current')}</span><span>{{ res.amount | precise }}</span></div>`);
+            if (global['resource'][name].max !== -1) {
+                bd.append(`<div class="modal_bd maxamount"><span>${loc('max')}</span><span>{{ res.max | precise }}</span></div>`);
+            }
         }
 
         return bd;
@@ -1985,7 +2008,7 @@ function breakdownPopover(id,name,type){
                             time = +(gap / rate).toFixed(0);
                         }
     
-                        if (time === Infinity || Number.isNaN(time)){
+                        if (!Number.isFinite(time)){
                             return 'Never';
                         }
                         
@@ -2004,6 +2027,9 @@ function breakdownPopover(id,name,type){
                         else {
                             return `${time}s`;
                         }
+                    },
+                    precise(val) {
+                        return sizePrecise(val);
                     },
                     direction(val){
                         return val >= 0 ? loc('to_full') : loc('to_empty');

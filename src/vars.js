@@ -2056,6 +2056,9 @@ export function resizeGame(){
         let build = $('#buildQueue').detach();
         build.addClass('right');
         build.removeClass('has-text-info');
+        let research = $('#resQueue').detach();
+        research.addClass('right');
+        research.removeClass('has-text-info');
 
         let queue = $('#msgQueue').detach();
         queue.addClass('right');
@@ -2063,24 +2066,31 @@ export function resizeGame(){
         queue.css('resize', 'none');
         $('#queueColumn').addClass('is-one-quarter');
         $('#queueColumn').append(build);
+        $('#queueColumn').append(research);
         $('#queueColumn').append(queue);
         $('#mainColumn').removeClass('is-three-quarters');
-        $('#mainColumn').addClass('is-half');
+        // ATTENTION: remove is-half correctly makes #mainColumn fill rest of the screen, but major columns should be formally layout by flex or grid, not this
+        // $('#mainColumn').addClass('is-half');
 
     }
     else if ($(window).width() < 1400 && $('#msgQueue').hasClass('right')){
         let build = $('#buildQueue').detach();
         build.removeClass('right');
         build.addClass('has-text-info');
-
+        let research = $('#resQueue').detach();
+        research.removeClass('right');
+        research.addClass('has-text-info');
+        
         let queue = $('#msgQueue').detach();
         queue.removeClass('right');
         queue.addClass('has-text-info');
         queue.css('resize', 'vertical');
         $('#queueColumn').removeClass('is-one-quarter');
         $('#sideQueue').append(build);
+        $('#sideQueue').append(research);
         $('#sideQueue').append(queue);
-        $('#mainColumn').removeClass('is-half');
+        // ATTENTION: remove is-half correctly makes #mainColumn fill rest of the screen, but major columns should be formally layout by flex or grid, not this
+        //$('#mainColumn').removeClass('is-half');
         $('#mainColumn').addClass('is-three-quarters');
     }
 }

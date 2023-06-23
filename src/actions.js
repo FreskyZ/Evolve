@@ -6710,7 +6710,7 @@ export function actionDesc(parent,c_action,obj,old,action,a_type){
                     }
                     else {
                         let f_res = res === 'Species' ? global.race.species : res;
-                        let label = f_res === 'Money' ? '$' : global.resource[f_res].name+': ';
+                        let label = global.resource[f_res].name+': ';
                         label = label.replace("_", " ");
                         let color = 'has-text-dark';
                         if (global.resource[f_res].amount < res_cost){
@@ -6730,7 +6730,7 @@ export function actionDesc(parent,c_action,obj,old,action,a_type){
     if (c_action.effect){
         var effect = typeof c_action.effect === 'string' ? c_action.effect : c_action.effect();
         if (effect){
-            parent.append($(`<div>${effect}</div>`));
+            parent.append($(`<div class="action-effect">${effect}</div>`));
         }
     }
     if (c_action.flair){

@@ -559,8 +559,7 @@ export function loadTab(tab){
                 if (!global.settings.tabLoad){
                     tagEvent('page_view',{ page_title: `Evolve - Research` });
                 }
-                $(`#mTabResearch`).append(`<div id="resQueue" class="resQueue" v-show="rq.display"></div>
-                <b-tabs class="resTabs" v-model="s.resTabs" :animated="s.animated">
+                $(`#mTabResearch`).append(`<b-tabs class="resTabs" v-model="s.resTabs" :animated="s.animated">
                     <b-tab-item id="tech">
                         <template slot="header">
                             <h2 class="is-sr-only">{{ 'new_sr' | label }}</h2>
@@ -850,7 +849,6 @@ export function loadTab(tab){
     }
 }
 
-
 export function index(){
     clearElement($('body'));
 
@@ -864,8 +862,8 @@ export function index(){
             <span class="infoTimer" id="infoTimer"></span>
             <span v-show="city.calendar.day">
                 <b-tooltip :label="moon()" :aria-label="moon()" position="is-bottom" size="is-small" multilined animated><i id="moon" class="moon wi"></i></b-tooltip>
-                <span class="year">${loc('year')} <span class="has-text-warning">{{ city.calendar.year }}</span></span>
-                <span class="day">${loc('day')} <span class="has-text-warning">{{ city.calendar.day }}</span></span>
+                <span class="year"><span class="has-text-warning">{{ city.calendar.year | cityCalendarYear }}</span></span>
+                <span class="day"><span class="has-text-warning">{{ city.calendar.day | cityCalendarDay }}</span></span>
                 <b-tooltip :label="weather()" :aria-label="weather()" position="is-bottom" size="is-small" multilined animated><i id="weather" class="weather wi"></i></b-tooltip>
                 <b-tooltip :label="temp()" :aria-label="temp()" position="is-bottom" size="is-small" multilined animated><i id="temp" class="temp wi"></i></b-tooltip>
                 <b-tooltip :label="atRemain()" v-show="s.at" :aria-label="atRemain()" position="is-bottom" size="is-small" multilined animated><span class="atime has-text-caution">{{ s.at | remain }}</span></b-tooltip>
@@ -886,10 +884,11 @@ export function index(){
             <h2 class="is-sr-only">Race Info</h2>
             <div class="column is-one-quarter name">{{ name() }}</div>
             <div class="column is-half morale-contain"><span id="morale" v-show="city.morale.current" class="morale">${loc('morale')} <span class="has-text-warning">{{ city.morale.current | mRound }}%</span></div>
-            <div class="column is-one-quarter power"><span id="powerStatus" class="has-text-warning" v-show="city.powered"><span>MW</span> <span id="powerMeter" class="meter">{{ city.power | approx }}</span></span></div>
+            <div class="column is-one-quarter power"><span id="powerStatus" class="has-text-warning" v-show="city.powered"><span>${loc('power')}</span> <span id="powerMeter" class="meter">{{ city.power | approx }}</span></span></div>
         </div>
         <div id="sideQueue">
             <div id="buildQueue" class="bldQueue has-text-info" v-show="display"></div>
+            <div id="resQueue" class="resQueue" v-show="display"></div>
             <div id="msgQueue" class="msgQueue vscroll has-text-info" aria-live="polite">
                 <div id="msgQueueHeader">
                     <h2 class="has-text-success">${loc('message_log')}</h2>
@@ -1392,29 +1391,4 @@ export function index(){
 
     // Right Column
     columns.append(`<div id="queueColumn" class="queueCol column"></div>`);
-
-    let egg15 = easterEgg(15,8);
-    // Bottom Bar
-    $('body').append(`
-        <div class="promoBar">
-            <span class="left">
-                <h1>
-                    <span class="has-text-warning">${egg15.length > 0 ? `Ev${egg15}lve` : `Evolve`}</span>
-                    by
-                    <span class="has-text-success">Demagorddon</span>
-                </h1>
-            </span>
-            <span class="right">
-                <h2 class="is-sr-only">External Links</h2>
-                <ul class="external-links">
-                    <li><a href="wiki.html" target="_blank">Wiki</a></li>
-                    <li><a href="https://www.reddit.com/r/EvolveIdle/" target="_blank">Reddit</a></li>
-                    <li><a href="https://discord.gg/dcwdQEr" target="_blank">Discord</a></li>
-                    <li><a href="https://github.com/pmotschmann/Evolve" target="_blank">GitHub</a></li>
-                    <li><a href="https://www.patreon.com/demagorddon" target="_blank">Patreon</a></li>
-                    <li><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=PTRJZBW9J662C&currency_code=USD&source=url" target="_blank">Donate</a></li>
-                </ul>
-            </span>
-        </div>
-    `);
 }

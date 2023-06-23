@@ -2157,6 +2157,10 @@ a {
 
     .leftColumn {
         height: ~"calc(100vh - 2.45rem)";
+        max-width: 320px;
+    }
+    #queueColumn {
+        max-width: 320px;
     }
 
     >.columns {
@@ -2213,11 +2217,12 @@ a {
 
     .queueCol {
         div.bldQueue:first-child {
-            margin-top: 2.625rem;
+            margin-top: 44px;
         }
     }
 
     .bldQueue,
+    .resQueue,
     .msgQueue {
         resize: vertical;
         height: 7rem;
@@ -2297,14 +2302,16 @@ a {
         }
     }
 
-    .resQueue {
+    .resQueue,
+    .resQueue.right {
+        padding-top: .25rem !important;
+
         h2 {
             border-bottom: solid .0625rem;
         }
         
         h2,
         .buildList {
-            margin-left: 2rem;
             margin-top: 0;
         }
         
@@ -2351,11 +2358,11 @@ a {
             display: flex;
             cursor: default;
 
-            :first-child {
+            :first-child:not(.tooltip-content) {
                 width: 30%;
             }
 
-            :nth-child(2) {
+            :nth-child(2):not(.tooltip-trigger) {
                 text-align: right;
                 width: 40%;
             }
@@ -2382,6 +2389,13 @@ a {
                     display: inline;
                     margin-left: .25rem;
                 }
+            }
+        }
+
+        #resCrates,#resContainers {
+            span.tooltip-trigger {
+                width: 100% !important;
+                text-align: right;
             }
         }
     }
@@ -3443,6 +3457,12 @@ a {
             margin-left: 1rem;
         }
     }
+
+    // hide manual part
+    // ATTENTION: this will make specific game process unplayable
+    #city-dist-outskirts,#city-food,#city-lumber,#city-stone {
+        display: none;
+    }
 }
 
 .large_log .main .msgQueue {
@@ -3672,7 +3692,7 @@ body .modal>div.popper {
             text-align: right;
         }
 
-        &.sum {
+        &.sum, &.amount {
             border-top: .0625rem solid;
         }
     }
@@ -3771,7 +3791,7 @@ body .modal>div.popper.wide {
 .modalBox,
 .industry {
     padding: 1rem;
-    border-radius: 1rem;
+    border-radius: 4px;
     text-align: center;
     min-height: 9.5rem;
 
@@ -3900,7 +3920,7 @@ span.inline {
     z-index: 10;
 
     .calendar {
-        margin: 0 auto;
+        margin-left: 8px;
 
         .temp {
             margin-left: 0.125rem;
@@ -3979,7 +3999,8 @@ span.inline {
     }
 
     .version {
-        margin-right: 1rem;
+        display: none;
+        margin-left: 12px;
     }
 }
 
@@ -4593,7 +4614,7 @@ div.bigbang {
     right: -500px;
     bottom: -500px;
     left: -500px;
-    background: transparent url(/lib/noise.png) 0 0;
+    background: transparent url(/images/noise.png) 0 0;
     background-size: 320px 320px;
     opacity: .35;
     animation: noise 1s steps(8,end) infinite both;

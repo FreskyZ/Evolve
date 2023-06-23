@@ -1,4 +1,4 @@
-import { global, keyMultiplier, sizeApproximation } from './vars.js';
+import { global, keyMultiplier, sizeApproximation, sizePrecise } from './vars.js';
 import { loc } from './locale.js';
 import { calcPrestige, clearElement, popover, clearPopper, vBind, timeFormat, modRes, messageQueue, genCivName, darkEffect, eventActive, easterEgg, trickOrTreat } from './functions.js';
 import { universeAffix } from './achieve.js';
@@ -1051,8 +1051,11 @@ export function buildGarrison(garrison,full){
 
     barracks.append($(`<div class="hire"><button v-show="g.mercs" class="button first hmerc" @click="hire">${loc('civics_garrison_hire_mercenary')}</button><div>`));
     
+    var training = $('<div class="training"></div>');
+    garrison.append(training);
+    training.append($(`<span>${loc('civics_garrison_training')} - ${loc('arpa_to_complete')} {{ g.rate, g.progress | trainTime }}</span>`));
     if (full){
-        garrison.append($(`<div class="training"><span>${loc('civics_garrison_training')} - ${loc('arpa_to_complete')} {{ g.rate, g.progress | trainTime }}</span> <progress class="progress" :value="g.progress" max="100">{{ g.progress }}%</progress></div>`));
+        training.append($(`<progress class="progress" :value="g.progress" max="100">{{ g.progress }}%</progress>`));
     }
 
     var campaign = $('<div class="columns is-mobile battle"></div>');
@@ -1373,14 +1376,12 @@ function war_campaign(gov){
         return;
     }
 
-    if (global.civic.garrison.raid > garrisonSize()){
-        global.civic.garrison.raid = garrisonSize();
-    }
-    else if (global.civic.garrison.raid < 0){
-        global.civic.garrison.raid = 0;
+    let actualGarrisonSize = garrisonSize();
+    if (actualGarrisonSize > global.civic.garrison.raid) {
+        actualGarrisonSize = global.civic.garrison.raid;
     }
     
-    if (global.civic.garrison.raid === 0){
+    if (actualGarrisonSize === 0){
         messageQueue(loc('civics_garrison_campaign_no_soldier'),'warning',false,['combat']);
         return;
     }
@@ -1390,7 +1391,7 @@ function war_campaign(gov){
     let lowLuck = global.race['puny'] ? 3 : 5;
 
     let luck = Math.floor(Math.seededRandom(lowLuck,highLuck,true)) / 10;
-    let army = armyRating(global.civic.garrison.raid,'army') * luck;
+    let army = armyRating(actualGarrisonSize,'army') * luck;
     let enemy = 0;
 
     switch(global.civic.garrison.tactic){
@@ -1437,14 +1438,14 @@ function war_campaign(gov){
     }
 
     let wounded = 0;
-    if (global.civic.garrison.raid > global.civic.garrison.workers - global.civic.garrison.crew - global.civic.garrison.wounded){
-        wounded = global.civic.garrison.raid - (global.civic.garrison.workers - global.civic.garrison.crew - global.civic.garrison.wounded);
+    if (actualGarrisonSize > global.civic.garrison.workers - global.civic.garrison.crew - global.civic.garrison.wounded){
+        wounded = actualGarrisonSize - (global.civic.garrison.workers - global.civic.garrison.crew - global.civic.garrison.wounded);
     }
 
     global.civic.garrison.fatigue++;
 
     if (army > enemy){
-        let deathCap = Math.floor(global.civic.garrison.raid / (5 - global.civic.garrison.tactic));
+        let deathCap = Math.floor(actualGarrisonSize / (5 - global.civic.garrison.tactic));
         deathCap += wounded;
         if (global.city.ptrait.includes('rage')){
             deathCap += planetTraits.rage.vars()[2];
@@ -1473,15 +1474,15 @@ function war_campaign(gov){
             let armored = 1 - (traits.armored.vars()[0] / 100);
             armor += Math.floor(death *armored);
         }
-        if (global.civic.garrison.raid > wounded){
+        if (actualGarrisonSize > wounded){
             death -= armor;
         }
 
         if (death < 0){
             death = 0;
         }
-        if (death > global.civic.garrison.raid){
-            death = global.civic.garrison.raid;
+        if (death > actualGarrisonSize){
+            death = actualGarrisonSize;
         }
         if (global.race['instinct']){
             let reduction = Math.floor(death * (traits.instinct.vars()[1] / 100));
@@ -1500,7 +1501,7 @@ function war_campaign(gov){
             wounded -= death;
         }
 
-        global.civic.garrison.wounded += Math.floor(Math.seededRandom(wounded,global.civic.garrison.raid - death,true));
+        global.civic.garrison.wounded += Math.floor(Math.seededRandom(wounded,actualGarrisonSize - death,true));
 
         let gains = {
             Money: 0,
@@ -1639,7 +1640,7 @@ function war_campaign(gov){
         let loot = loc('civics_garrison_gained');
         if (global.resource.Money.display && gains.Money > 0){
             gains.Money = lootModify(gains.Money,gov);
-            loot = loot + loc('civics_garrison_quant_money',[gains.Money]);
+            loot = loot + loc('civics_garrison_quant_money',[sizePrecise(gains.Money)]);
             modRes('Money',gains.Money);
         }
 
@@ -1647,7 +1648,7 @@ function war_campaign(gov){
         payout.forEach(function(res){
             if (gains[res] > 0 && (global.resource[res].display || res === 'Steel' || res === 'Titanium')){
                 gains[res] = lootModify(gains[res],gov);
-                loot = loot + loc('civics_garrison_quant_res',[gains[res],global.resource[res].name]);
+                loot = loot + loc('civics_garrison_quant_res',[sizePrecise(gains[res]),global.resource[res].name]);
                 modRes(res,gains[res]);
                 if (res === 'Steel' || res === 'Titanium'){
                     global.resource[res].display = true;
@@ -1752,7 +1753,7 @@ function war_campaign(gov){
         }
     }
     else {
-        let deathCap = global.civic.garrison.raid;
+        let deathCap = actualGarrisonSize;
         deathCap += wounded;
         if (global.civic.garrison.tactic === 0){
             deathCap = Math.floor(deathCap / 2);
@@ -1784,7 +1785,7 @@ function war_campaign(gov){
             let armored = traits.armored.vars()[0] / 100;
             armor += Math.floor(death * armored);
         }
-        if (global.civic.garrison.raid > wounded){
+        if (actualGarrisonSize > wounded){
             death -= armor;
         }
         if (global.race['instinct']){
@@ -1795,8 +1796,8 @@ function war_campaign(gov){
         if (death < 1){
             death = 1;
         }
-        if (death > global.civic.garrison.raid){
-            death = global.civic.garrison.raid;
+        if (death > actualGarrisonSize){
+            death = actualGarrisonSize;
         }
         global.civic.garrison.workers -= death;
         global.stats.died += death;
@@ -1809,7 +1810,7 @@ function war_campaign(gov){
             global.civic.garrison.wounded -= death;
             wounded -= death;
         }
-        global.civic.garrison.wounded += 1 + Math.floor(Math.seededRandom(wounded,global.civic.garrison.raid - death,true));
+        global.civic.garrison.wounded += 1 + Math.floor(Math.seededRandom(wounded,actualGarrisonSize - death,true));
 
         let revive = 0;
         if (global.race['revive']){

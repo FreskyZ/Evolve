@@ -2441,7 +2441,8 @@ export function bloodwar(){
             if (siege > 0){
                 damage++;
                 global.portal.fortress.walls--;
-                if (global.portal.fortress.walls === 0){
+                // GAME BALANCE CHANGE: wall hp raised to 1100
+                if (global.portal.fortress.walls === -1000){
                     siege_report.destroyed = true;
                     destroyed = true;
                     break;
@@ -4897,7 +4898,7 @@ function drawHellReports(){
         for (startYear; startYear<global.city.calendar.year; startYear++){
             for (startDay; startDay<=global.city.calendar.orbit; startDay++){
                 list = `
-                    <div class="text-button"><span @click="reportLoad('${startYear}','${startDay}')">${loc('year') + " " + startYear + " | " + loc('day') + " " + startDay}</span>${hell_reports[`year-${startYear}`][`day-${startDay}`].foundGem ? '<span class="has-text-advanced">&#9830</span>' : ''}</div>
+                    <div class="text-button"><span @click="reportLoad('${startYear}','${startDay}')">${loc('city_calendar_year', [startYear]) + loc('city_calendar_day', [startDay])}</span>${hell_reports[`year-${startYear}`][`day-${startDay}`].foundGem ? '<span class="has-text-advanced">&#9830</span>' : ''}</div>
                 ` + list;
             }
             startDay = 1;
@@ -4905,7 +4906,7 @@ function drawHellReports(){
         //Remaining days in current year.
         for (startDay; startDay<global.city.calendar.day; startDay++){
             list = `
-                <div class="text-button"><span @click="reportLoad('${startYear}','${startDay}')">${loc('year') + " " + startYear + " | " + loc('day') + " " + startDay}</span>${hell_reports[`year-${startYear}`][`day-${startDay}`].foundGem ? `<span class="has-text-advanced" aria-label="${loc(`hell_report_log_soul_gem_aria`)}">&#9830</span>` : ''}</div>
+                <div class="text-button"><span @click="reportLoad('${startYear}','${startDay}')">${loc('city_calendar_year', [startYear]) + loc('city_calendar_day', [startDay])}</span>${hell_reports[`year-${startYear}`][`day-${startDay}`].foundGem ? `<span class="has-text-advanced" aria-label="${loc(`hell_report_log_soul_gem_aria`)}">&#9830</span>` : ''}</div>
             ` + list;
         }
         recentDay.year = startYear;

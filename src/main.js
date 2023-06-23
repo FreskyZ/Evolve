@@ -185,6 +185,7 @@ defineJobs(true);
 defineResources();
 initTabs();
 buildQueue();
+resQueue();
 if (global.race['shapeshifter']){
     shapeShift(false,true);
 }
@@ -441,7 +442,13 @@ vBind({
                 return `${hours}:${minutes.toString().padStart(2,'0')}`;
             }
             return;
-        }
+        },
+        cityCalendarYear(val) {
+            return loc('city_calendar_year', [val]); 
+        },
+        cityCalendarDay(val) {
+            return loc('city_calendar_day', [val]);
+        },
     }
 });
 
@@ -648,7 +655,7 @@ q_check(true);
 $('#lbl_city').html('Village');
 
 if (window.Worker){
-    webWorker.w = new Worker("evolve/evolve.js");
+    webWorker.w = new Worker("worker.js");
     webWorker.w.addEventListener('message', function(e){
         var data = e.data;
         switch (data) {
@@ -5722,6 +5729,17 @@ function fastLoop(){
                 let craft_ratio = craftingRatio(craft,'auto').multiplier;
 
                 let speed = global.genes['crafty'] ? 2 : 1;
+
+                // ---------------------------- GAME BALANCE CHANGE ----------------------------
+                // craft speed is too low when manual crafting is disabled
+                // this should formally should be something like x2 or by some tech, not this brute
+                if (craft != 'Mythril') {
+                    speed = speed * 30;
+                } else {
+                    speed = speed * 5;
+                }
+                // ---------------------------- GAME BALANCE CHANGE ----------------------------
+
                 let volume = Math.floor(global.resource[crafting_costs[craft][0].r].amount / (crafting_costs[craft][0].a * speed * craft_costs / 140));
                 for (let i=1; i<crafting_costs[craft].length; i++){
                     let temp = Math.floor(global.resource[crafting_costs[craft][i].r].amount / (crafting_costs[craft][i].a * speed * craft_costs / 140));
@@ -5853,6 +5871,9 @@ function fastLoop(){
         if (global.race['beast']){
             rate *= 1 + (traits.beast.vars()[2] / 100);
         }
+        // GAME BALANCE CHANGE: temp speed up training
+        rate *= 10;
+        // GAME BALANCE CHANGE
         global.civic.garrison.rate = rate * time_multiplier;
         if (global.race['brute']){
             global.civic.garrison.rate += traits.brute.vars()[1] / 40 * time_multiplier;
@@ -7404,6 +7425,10 @@ function midLoop(){
         }
         if (global.city['storage_yard'] && global.tech['trade'] && global.tech['trade'] >= 3){
             let r_count = global.city.storage_yard.count;
+            // ---------------------------- GAME BALANCE CHANGE ----------------------------
+            // trade route is too few and manual trade is disabled
+            r_count = r_count * 400;
+            // ---------------------------- GAME BALANCE CHANGE ----------------------------
             global.city.market.mtrade += r_count;
             breakdown.t_route[loc('city_storage_yard')] = r_count;
         }
@@ -8145,7 +8170,7 @@ function midLoop(){
             }
             if (idx >= 0 && c_action && !global.r_queue.pause){
                 if (c_action.action()){
-                    messageQueue(loc('research_success',[global.r_queue.queue[idx].label]),'success',false,['queue','research_queue']);
+                    messageQueue(loc('research_success',[global.r_queue.queue[idx].label, c_action.effect]),'success',false,['queue','research_queue']);
                     gainTech(global.r_queue.queue[idx].type);
                     if (c_action['post']) {
                         c_action.post();
